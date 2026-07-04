@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wtalk | 极简即时通讯 (内测版)</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* ====================
+           基础设置 - 优化对比度
+           ==================== */
+        :root {
+            --bg-color: #000000; /* 纯黑 */
+            --surface-color: #0A0A0A; /* 极深灰 */
+            --surface-hover: #141414;
+            --accent-color: #FFFFFF;
+            --text-main: #FFFFFF;
+            --text-secondary: #A0A0A0; /* 提亮灰色，增强可读性 */
+            --border-color: #333333; /* 边框稍微加深一点点 */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* ====================
+           导航栏
+           ==================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo i {
+            color: var(--text-main);
+            font-size: 1.6rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        .btn {
+            padding: 8px 20px;
+            background: var(--text-main);
+            color: var(--bg-color);
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: transform 0.2s, background-color 0.2s;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background-color: #e0e0e0;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--text-main);
+        }
+
+        /* ====================
+           Hero 区域
+           ==================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 5% 50px;
+            position: relative;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .grid-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 60px 60px;
+            background-position: center;
+            opacity: 0.15; /* 稍微加深一点背景网格 */
+            z-index: -2;
+            transform: perspective(500px) rotateX(60deg);
+            transform-origin: top center;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 60px; }
+        }
+
+        .hero-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            max-width: 1100px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .hero-text {
+            z-index: 2;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #1a1a1a;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary); /* 使用提亮后的灰色 */
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            font-family: monospace;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.05;
+            margin-bottom: 24px;
+            color: var(--text-main);
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: var(--text-secondary); /* 使用提亮后的灰色 */
+            margin-bottom: 32px;
+            max-width: 420px;
+            line-height: 1.7;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        /* 系统提示 - 修改颜色以提高可见性 */
+        .system-req {
+            font-size: 0.85rem;
+            color: var(--text-secondary); /* 提亮 */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.03);
+            padding: 8px 12px;
+            border-radius: 4px;
+            width: fit-content;
+        }
+
+        .system-req i { font-size: 1rem; color: #fff; }
+
+        /* 3D 界面展示 */
+        .hero-visual {
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .chat-window {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 24px;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            transform: rotateY(-5deg) rotateX(5deg);
+            position: relative;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: #333;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #fff;
+            font-family: monospace;
+        }
+
+        .user-info h3 { font-size: 0.9rem; font-weight: 500; }
+        .user-info span { font-size: 0.75rem; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+        .user-info .status { width: 6px; height: 6px; background: #fff; border-radius: 50%; display: inline-block; }
+
+        .chat-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 260px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            position: relative;
+            color: #ddd;
+        }
+
+        .msg-left {
+            border-left: 2px solid #444;
+            padding-left: 12px;
+            align-self: flex-start;
+        }
+
+        .msg-right {
+            background: #fff;
+            color: #000;
+            align-self: flex-end;
+            font-weight: 500;
+        }
+
+        .msg-time {
+            font-size: 0.65rem;
+            opacity: 0.5; /* 时间戳稍微淡一点，但不要太淡 */
+            margin-top: 6px;
+            display: block;
+            text-align: right;
+        }
+
+        .floating-tag {
+            position: absolute;
+            background: #000;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-size: 0.75rem;
+            color: var(--text-main); /* 浮动标签文字改为白色，确保可见 */
+            font-family: monospace;
+        }
+
+        .tag-1 {
+            top: 20px;
+            right: -20px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .tag-2 {
+            bottom: 40px;
+            left: -20px;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        .tag-icon {
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* ====================
+           特性与状态
+           ==================== */
+        .status-section {
+            padding: 100px 5%;
+            background: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .info-card {
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            background: rgba(255,255,255,0.01);
+            position: relative;
+        }
+
+        .info-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card h3 i { font-size: 1.2rem; }
+
+        .info-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .roadmap-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #222;
+        }
+        .roadmap-item:last-child { border: none; }
+
+        .roadmap-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #fff; /* 标签文字改为白色，更加清晰 */
+        }
+
+        .progress-track {
+            height: 2px;
+            background: #222;
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #fff;
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            background: #222;
+            border: 1px solid #333; /* 增加边框以增强可见性 */
+            border-radius: 2px;
+        }
+        
+        .badge-done { color: #fff; border-color: #555; }
+        .badge-wip { color: #ccc; border-color: #444; }
+        /* 计划中的状态也要看清 */
+        .badge-todo { color: #888; border-color: #333; }
+
+        /* ====================
+           安全与加密
+           ==================== */
+        .security-section {
+            padding: 100px 5%;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .encryption-visual {
+            margin: 40px auto;
+            width: 200px;
+            height: 200px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+        }
+        
+        .encryption-visual::after {
+            content: 'SHA256';
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.8rem;
+            font-family: monospace;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+        }
+
+        .hash-text {
+            font-family: monospace;
+            color: #666; /* 哈希值稍微深一点，作为装饰 */
+            font-size: 0.8rem;
+            word-break: break-all;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+
+        /* ====================
+           页脚
+           ==================== */
+        footer {
+            padding: 60px 5% 30px;
+            background: #000;
+            border-top: 1px solid #111;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .footer-desc {
+            color: var(--text-secondary); /* 提亮 */
+            font-size: 0.9rem; /* 稍微加大字体 */
+            max-width: 500px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary); /* 提亮 */
+            font-size: 0.9rem;
+            margin: 0 15px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover { color: #fff; }
+
+        .bug-report {
+            margin-top: 40px;
+            display: inline-block;
+            border: 1px solid #333;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .bug-report:hover {
+            border-color: #fff;
+            color: #fff;
+            background: #111;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero-container { grid-template-columns: 1fr; text-align: center; }
+            .hero-btns { justify-content: center; }
+            .hero h1 { font-size: 2.5rem; }
+            .grid-container { grid-template-columns: 1fr; }
+            .chat-window { transform: none; margin-top: 40px; }
+            .tag-1, .tag-2 { display: none; }
+            .navbar { padding: 15px 20px; }
+            .nav-links { display: none; }
+            .system-req { margin: 0 auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="ri-terminal-box-line"></i>
+            Wtalk
+        </div>
+        <div class="nav-links">
+            <a href="#features">功能清单</a>
+            <a href="#roadmap">开发进度</a>
+            <a href="#security">加密原理</a>
+        </div>
+        <button class="btn" onclick="downloadWin()">
+            <i class="ri-windows-fill"></i> Windows 客户端
+        </button>
+    </nav>
+
+    <!-- Hero 区域 -->
+    <header class="hero">
+        <div class="grid-bg"></div>
+
+        <div class="hero-container">
+            <div class="hero-text">
+                <div class="badge">
+                    <i class="ri-code-s-slash-line"></i>
+                    v0.7 Alpha / 内测阶段
+                </div>
+                <h1>极简 · 本地 ·<br>纯粹通讯</h1>
+                <p>几位开发者的业余作品。摒弃繁杂功能，回归文字交流。目前仅支持 Windows 平台及中国大陆地区访问。</p>
+                
+                <div class="hero-btns">
+                    <button class="btn" onclick="downloadWin()">
+                        <i class="ri-download-2-line"></i> 下载 .exe
+                    </button>
+                    <!-- 移除了 GitHub/源码 按钮 -->
+                </div>
+
+                <div class="system-req">
+                    <i class="ri-alert-line"></i> 注意：界面偶发Bug，图片发送功能开发中
+                </div>
+            </div>
+
+            <!-- 3D 视觉展示区 -->
+            <div class="hero-visual" id="heroVisual">
+                <div class="chat-window">
+                    <div class="chat-header">
+                        <div class="avatar">DEV</div>
+                        <div class="user-info">
+                            <h3>Usermelon2024</h3>
+                            <span><div class="status"></div> 正在编码</span>
+                        </div>
+                        <div style="margin-left: auto; color: #333;">
+                            <i class="ri-more-fill"></i>
+                        </div>
+                    </div>
+                    <div class="chat-body" id="chatBody">
+                        <div class="message msg-left">
+                            Wtalk 服务端部署好了吗？
+                            <span class="msg-time">14:20</span>
+                        </div>
+                        <div class="message msg-right">
+                            好个大鸡蛋，你行你上。
+                            <span class="msg-time">14:21</span>
+                        </div>
+                        <div class="message msg-left">
+                            我发个截图看看...你妈的图片都发不了？
+                            <span class="msg-time">14:21</span>
+                        </div>
+                        <div class="message msg-right">
+                            你妈的有本事你来啊。
+                            <span class="msg-time">14:22</span>
+                        </div>
+                    </div>
+                    
+                    <div class="floating-tag tag-1">
+                        <div class="tag-icon"><i class="ri-shield-keyhole-line"></i></div>
+                        <div>SHA256 HASH</div>
+                    </div>
+                    
+                    <div class="floating-tag tag-2">
+                        <div class="tag-icon"><i class="ri-map-pin-line"></i></div>
+                        <div>CN Only</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 功能与进度 -->
+    <section class="status-section" id="features">
+        <div class="section-header">
+            <h2>当前状态</h2>
+            <p>我们优先保证核心通讯功能的稳定性，其它功能正在逐步完善。</p>
+        </div>
+
+        <div class="grid-container">
+            <div class="info-card">
+                <h3><i class="ri-check-line"></i> 已支持功能</h3>
+                <ul style="line-height: 2;">
+                    <li style="color:#fff;">- 文本消息实时传输</li>
+                    <li style="color:#fff;">- SHA256 密码哈希存储</li>
+                    <li style="color:#fff;">- Windows 客户端 (x64)</li>
+                    <li style="color:#fff;">- 国内服务器节点优化</li>
+                    <li style="color:#fff;">- 极简界面</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h3><i class="ri-time-line"></i> 开发路线图</h3>
+                
+                <div class="roadmap-item">
+                    <div class="roadmap-label">
+                        <span>图片发送</span>
+                        <span class="status-badge badge-wip">开发中</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill" style="width: 60%;"></div></div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-label">
+                        <span>文件传输</span>
+                        <span class="status-badge badge-todo">计划中</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill" style="width: 0%;"></div></div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-label">
+                        <span>移动端支持</span>
+                        <span class="status-badge badge-todo">计划中</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill" style="width: 0%;"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 安全说明 -->
+    <section class="security-section" id="security">
+        <div class="section-header">
+            <h2>关于安全</h2>
+            <p>不使用云端AI分析，不上传用户元数据。</p>
+        </div>
+        
+        <div class="encryption-visual">
+            <i class="ri-lock-password-line"></i>
+        </div>
+        
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+            目前版本使用 <strong>SHA256</strong> 算法对用户密码进行哈希处理后存储。
+            虽然我们目前不提供语音/视频通话以减少数据泄露风险，也暂未支持文件传输，
+            但请记住，这是一款处于 Alpha 阶段的实验性软件。
+        </p>
+        <div class="hash-text">
+            e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-logo">Wtalk</div>
+        <p class="footer-desc">
+            由几位热爱技术的开发者利用业余时间维护。<br>
+            如果您遇到界面闪退或错位，那是正常现象，请谅解。
+        </p>
+        
+        <div class="footer-links">
+            <a href="yssm.html">隐私声明</a>
+            <a href="https://qm.qq.com/q/aJXAyy6RNu">联系我们</a>
+            <!-- 移除了 开源协议 -->
+        </div>
+
+        <a href="#" class="bug-report">
+            <i class="ri-bug-line"></i> 提交 Bug 反馈
+        </a>
+
+        <div style="margin-top: 40px; color: #444; font-size: 0.75rem;">
+            &copy; 2023 Wtalk Project. Windows Only. CN Region.
+        </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        const tl = gsap.timeline();
+        tl.from(".badge", { y: -10, opacity: 0, duration: 0.6 })
+          .from("h1", { y: 20, opacity: 0, duration: 0.8 }, "-=0.4")
+          .from(".hero p", { opacity: 0, duration: 0.8 }, "-=0.6")
+          .from(".chat-window", { 
+              scale: 0.9, 
+              opacity: 0, 
+              rotationY: 20, 
+              duration: 1.2, 
+              ease: "power3.out" 
+          }, "-=1");
+
+        const heroSection = document.querySelector('.hero');
+        const visual = document.getElementById('heroVisual');
+        const chatWindow = document.querySelector('.chat-window');
+
+        heroSection.addEventListener('mousemove', (e) => {
+            if(window.innerWidth > 768) {
+                const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+                const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+                gsap.to(chatWindow, {
+                    rotationY: -5 + xAxis,
+                    rotationX: 5 - yAxis,
+                    duration: 0.5,
+                    ease: "power1.out"
+                });
+            }
+        });
+
+        const chatBody = document.getElementById('chatBody');
+        const extraMessages = [
+            { text: "特么的还是发文字吧", type: "left" },
+            { text: "彳亍", type: "right" }
+        ];
+        
+        let msgIdx = 0;
+        
+        function addMsg() {
+            if(msgIdx >= extraMessages.length) return;
+            const msg = extraMessages[msgIdx];
+            const div = document.createElement('div');
+            div.className = `message msg-${msg.type}`;
+            div.style.opacity = 0;
+            div.innerHTML = `${msg.text}<span class="msg-time">Now</span>`;
+            chatBody.appendChild(div);
+            
+            gsap.to(div, { opacity: 1, y: -10, duration: 0.4 });
+            chatBody.scrollTop = chatBody.scrollHeight;
+            
+            msgIdx++;
+            if(msgIdx < extraMessages.length) setTimeout(addMsg, 3000);
+        }
+        
+        setTimeout(addMsg, 2000);
+
+        function downloadWin() {
+            const btn = document.querySelector('.navbar .btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> 连接节点...';
+            setTimeout(() => {
+                window.location.href = 'https://d6.qyshare.click/s/TBVWTxUNFVIEUw5RVFVWGlYCU1QaKFCVA501NTUxoPUwIOGlUEKFCVA50gMKFCVA50UVMPDlIPKFCVA50RUbFVhERH9YREMVDRVYREQZRk5CWRlYRVKFCVA50VGxVYRER8Uk4VDRVCR1tYVlMYBQcFKFCVA50RgHKFCVA50BgHKFCVA50xgPVVYHBlFVBBoDKFCVA501VUGgMDKFCVA50QcaDlJWDhoEB1MBBgdSKFCVA50QdSBKFCVA50cZVV5ZFRsVVlQVDRUCDgQOKFCVA50VYBUhoGUQ8HGgMPKFCVA50gKFCVA50aDg4PURoGVQMHVFIFKFCVA50KFCVA50QPUwKFCVA50VGxVZVlpSFQ0VVFteUllDGVJPUhUbFVRYWUNSWUNjTkdSFQ0VVkdHW15UVkNeWFkYTxpaRFNYQFlbWFZTFRsVVlMVDRUHKFCVA50KFCVA50UCKFCVA50Q4KFCVA50BRpUKFCVA50QFSGgMPKFCVA50wUaVgQGDhoEBQMGVKFCVA50KFCVA50EBwUPKFCVA50lQVSg=='
+                btn.innerHTML = '<i class="ri-check-line"></i> 已开始下载';
+                setTimeout(() => btn.innerHTML = originalText, 2000);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>隐私声明 · Wtalk</title>
+    <!-- Font Awesome 6 共用图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* ========== CSS Variables · 黑白灰 ========== */
+        :root {
+            --color-bg: #0a0a0a;
+            --color-bg-secondary: #111111;
+            --color-bg-card: rgba(18, 18, 18, 0.8);
+            --color-primary: #ffffff;
+            --color-primary-light: #e0e0e0;
+            --color-primary-dark: #aaaaaa;
+            --color-accent: #888888;
+            --color-accent-light: #bbbbbb;
+            --color-text: #f0f0f0;
+            --color-text-secondary: #aaaaaa;
+            --color-text-muted: #666666;
+            --color-border: rgba(255, 255, 255, 0.04);
+            --color-glow: rgba(255, 255, 255, 0.02);
+            --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.02);
+            --shadow-card-hover: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ========== Glow Orbs ========== */
+        .glow-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(140px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.08;
+        }
+        .glow-orb--1 {
+            width: 500px;
+            height: 500px;
+            top: -200px;
+            right: -150px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 70%);
+        }
+        .glow-orb--2 {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(200, 200, 200, 0.04), transparent 70%);
+        }
+
+        /* ========== Navigation ========== */
+        .navbar {
+            position: relative;
+            z-index: 10;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar__logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+        .navbar__logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #555, #222);
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+        .navbar__logo span {
+            background: linear-gradient(135deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar__back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            transition: all 0.3s var(--ease-spring);
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .navbar__back:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateX(-4px);
+        }
+
+        /* ========== Main Content ========== */
+        .main {
+            position: relative;
+            z-index: 1;
+            padding: 60px 0 80px;
+        }
+
+        .privacy-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: var(--shadow-card);
+            padding: 56px 48px;
+            transition: all 0.5s var(--ease-spring);
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+        .privacy-card:hover {
+            box-shadow: var(--shadow-card-hover);
+            border-color: rgba(255, 255, 255, 0.06);
+            transform: perspective(800px) rotateX(1deg) rotateY(1deg);
+        }
+
+        .privacy-header {
+            margin-bottom: 40px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .privacy-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .privacy-header .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            font-size: 14px;
+            color: var(--color-text-muted);
+            margin-top: 8px;
+        }
+        .privacy-header .meta i {
+            margin-right: 6px;
+            color: #666;
+        }
+        .privacy-header .version-badge {
+            display: inline-block;
+            padding: 2px 14px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        .privacy-body {
+            color: var(--color-text-secondary);
+        }
+
+        .privacy-body h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #eee;
+            margin: 36px 0 14px;
+            letter-spacing: -0.3px;
+            padding-left: 0;
+            position: relative;
+        }
+        .privacy-body h2::before {
+            content: '';
+            position: absolute;
+            left: -16px;
+            top: 6px;
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, #888, #444);
+            border-radius: 4px;
+        }
+        .privacy-body h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .privacy-body p {
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+
+        .privacy-body ul,
+        .privacy-body ol {
+            margin: 12px 0 20px 24px;
+            list-style: none;
+        }
+        .privacy-body ul li,
+        .privacy-body ol li {
+            margin-bottom: 10px;
+            padding-left: 28px;
+            position: relative;
+        }
+        .privacy-body ul li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #888;
+            font-size: 14px;
+        }
+        .privacy-body ol {
+            counter-reset: item;
+        }
+        .privacy-body ol li {
+            counter-increment: item;
+            padding-left: 36px;
+        }
+        .privacy-body ol li::before {
+            content: counter(item) '.';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .privacy-body .table-wrap {
+            overflow-x: auto;
+            margin: 20px 0 28px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .privacy-body table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .privacy-body table th {
+            background: rgba(255, 255, 255, 0.02);
+            color: #ddd;
+            font-weight: 600;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .privacy-body table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            color: var(--color-text-secondary);
+        }
+        .privacy-body table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .privacy-body .highlight-box {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid #888;
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            color: var(--color-text-secondary);
+        }
+
+        .privacy-body .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+        }
+        .privacy-body .contact-item i {
+            width: 24px;
+            color: #888;
+            font-size: 16px;
+        }
+
+        /* ========== Footer ========== */
+        .footer {
+            position: relative;
+            z-index: 1;
+            padding: 40px 0 28px;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            margin-top: 20px;
+        }
+        .footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--color-text-muted);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .footer a {
+            color: var(--color-text-muted);
+            transition: color 0.3s var(--ease-smooth);
+        }
+        .footer a:hover {
+            color: #fff;
+        }
+        .footer .love {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .footer .love i {
+            color: #666;
+        }
+
+        /* ========== Scroll Reveal ========== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+            transition: all 0.8s var(--ease-out-expo);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-delay-1 {
+            transition-delay: 0.05s;
+        }
+        .reveal-delay-2 {
+            transition-delay: 0.1s;
+        }
+        .reveal-delay-3 {
+            transition-delay: 0.15s;
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 768px) {
+            .privacy-card {
+                padding: 32px 20px;
+            }
+            .privacy-header h1 {
+                font-size: 26px;
+            }
+            .privacy-body h2 {
+                font-size: 19px;
+                padding-left: 12px;
+            }
+            .privacy-body h2::before {
+                display: none;
+            }
+            .privacy-body ul li,
+            .privacy-body ol li {
+                padding-left: 20px;
+            }
+            .navbar .container {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .navbar__back {
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+            .footer .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .table-wrap {
+                font-size: 13px;
+            }
+            .privacy-body table th,
+            .privacy-body table td {
+                padding: 8px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .privacy-card {
+                padding: 24px 16px;
+            }
+            .privacy-header h1 {
+                font-size: 22px;
+            }
+            .privacy-header .meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== Glow Orbs ===== -->
+    <div class="glow-orb glow-orb--1"></div>
+    <div class="glow-orb glow-orb--2"></div>
+
+    <!-- ===== Navigation ===== -->
+    <nav class="navbar" role="navigation" aria-label="主导航">
+        <div class="container">
+            <a href="#" class="navbar__logo" aria-label="Wtalk 首页">
+                <span>Wtalk</span>
+            </a>
+            <a href="wtalk.html" class="navbar__back">
+                <i class="fas fa-arrow-left"></i> 返回官网
+            </a>
+        </div>
+    </nav>
+
+    <!-- ===== Main ===== -->
+    <main class="main">
+        <div class="container">
+            <div class="privacy-card reveal">
+                <div class="privacy-header">
+                    <h1>隐私声明</h1>
+                    <div class="meta">
+                        <span><i class="far fa-calendar-alt"></i> 最后更新：2026 年 7 月 4 日</span>
+                        <span><i class="fas fa-tag"></i> 版本：v1.0</span>
+                        <span class="version-badge"><i class="fas fa-shield-alt"></i> 为中国大陆用户提供</span>
+                    </div>
+                </div>
+
+                <div class="privacy-body">
+                    <p>欢迎使用 Wtalk（以下简称“本软件”或“我们”）。Wtalk 是由几位独立开发者“为爱发电”所维护的 Windows 即时通讯软件。我们深知隐私对您的重要性，并承诺以透明、审慎的态度处理您的个人信息。本声明旨在向您清晰说明我们收集、使用、存储和保护您信息的方式。</p>
+                    <p><strong>本软件目前仅面向中国大陆地区用户，且仅提供 Windows 客户端。</strong> 您使用本软件即表示您同意本声明的全部条款。</p>
+
+                    <h2>1. 我们收集的信息</h2>
+                    <p>我们只收集为了提供核心聊天服务所必需的最少量信息，具体包括：</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>信息类别</th>
+                                    <th>具体内容</th>
+                                    <th>收集目的</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>账户信息</strong></td>
+                                    <td>您注册时使用的<strong>用户名</strong>和<strong>密码</strong>（密码通过 SHA256 哈希加密后存储，我们无法获知原始密码）。</td>
+                                    <td>用于创建和管理您的账户，确保您能够安全登录。</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>聊天消息</strong></td>
+                                    <td>您通过本软件发送和接收的<strong>文字消息</strong>。</td>
+                                    <td>用于在您的设备之间（或与好友之间）传递消息内容。<strong>请注意：</strong> 目前消息仅存储在您的本地设备中，我们<strong>不会</strong>在服务器上保存您的聊天记录。</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>设备信息</strong></td>
+                                    <td>您的操作系统版本、设备型号、网络状态等基本技术信息。</td>
+                                    <td>用于优化软件性能、诊断问题以及保障服务稳定性。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>我们明确不收集以下信息：</strong></p>
+                    <ul>
+                        <li>语音、视频通话内容（本软件暂不支持）。</li>
+                        <li>文件传输内容（本软件暂不支持）。</li>
+                        <li>地理位置、通讯录、照片库等与核心功能无关的敏感权限信息。</li>
+                        <li>任何涉及生物识别、金融账户、身份证件等高度敏感的个人信息。</li>
+                    </ul>
+
+                    <h2>2. 我们如何使用信息</h2>
+                    <p>我们仅将收集的信息用于以下目的：</p>
+                    <ul>
+                        <li>向您提供即时消息的发送、接收和显示功能。</li>
+                        <li>维护您的账户安全，验证登录身份。</li>
+                        <li>改善软件性能，修复错误，提升用户体验。</li>
+                        <li>在必要时与您沟通（如推送重要通知或安全提醒）。</li>
+                    </ul>
+                    <p>我们<strong>不会</strong>将您的个人信息用于任何形式的商业推广、广告投放或出售给第三方。</p>
+
+                    <h2>3. 信息存储与保护</h2>
+                    <ul>
+                        <li><strong>存储位置</strong>：聊天消息默认存储在您的本地电脑中，我们<strong>不会</strong>将消息内容上传至任何云端服务器。账户信息（用户名及加密后的密码）存储在我们的认证数据库中，该数据库位于中国大陆境内的服务器。</li>
+                        <li><strong>存储期限</strong>：我们保留您的账户信息，直至您主动注销账户。本地聊天记录由您自己管理，您可以随时通过软件功能清空。</li>
+                        <li><strong>安全措施</strong>：我们采用以下措施保护您的信息安全：
+                            <ul>
+                                <li>密码使用 <strong>SHA256</strong> 单向哈希加密，不可逆向还原。</li>
+                                <li>传输通道采用 TLS 加密，防止数据在传输过程中被窃听。</li>
+                                <li>数据库访问权限严格限制，仅核心开发者有权维护。</li>
+                                <li>定期审计系统日志，防范未授权访问。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p>尽管我们尽最大努力保护您的数据，但任何互联网传输或电子存储方式均存在固有风险，请知悉。</p>
+
+                    <h2>4. 您的权利</h2>
+                    <p>根据《中华人民共和国个人信息保护法》，您享有以下权利：</p>
+                    <ul>
+                        <li><strong>查阅、更正</strong>：您可随时登录软件查看您的账户信息，并修改用户名或密码。</li>
+                        <li><strong>删除</strong>：您可以自行清空本地聊天记录，或联系开发者注销账户，我们将永久删除您的账户信息。</li>
+                        <li><strong>撤回同意</strong>：您可以通过停止使用本软件并卸载来撤回您对本声明的全部同意。</li>
+                        <li><strong>投诉</strong>：如果您认为您的隐私权益受到侵害，您有权向有关监管部门投诉。</li>
+                    </ul>
+                    <p>如您需要行使上述权利，请通过第 7 节的联系方式与我们沟通，我们将在 15 个工作日内响应。</p>
+
+                    <h2>5. 信息共享与披露</h2>
+                    <p>我们<strong>不会</strong>主动向任何第三方共享或转让您的个人信息，除非：</p>
+                    <ul>
+                        <li>获得您的明确单独同意；</li>
+                        <li>根据法律法规、司法或行政命令的要求，必须披露；</li>
+                        <li>为保护本软件、其他用户或公众的重大利益，在合理且必要范围内披露。</li>
+                    </ul>
+                    <p>我们不会将您的信息用于任何形式的跨境传输。</p>
+
+                    <h2>6. 未成年人保护</h2>
+                    <p>本软件不面向未满 14 周岁的儿童。若您是未成年人（14 周岁至 18 周岁），请在法定监护人陪同下阅读本声明，并确保您已获得监护人同意。</p>
+
+                    <h2>7. 联系我们</h2>
+                    <p>由于我们是一支非商业化的开发者团队，目前主要通过社区渠道与用户沟通。如您对本声明或您的隐私有任何疑问、意见或投诉，请通过以下方式联系我们：</p>
+                    <div class="contact-item"><i class="fab fa-github"></i> GitHub Issue：我们会在项目仓库中开设“隐私反馈”标签，您可提交 Issue。(我还在研究怎么用)</div>
+                    <div class="contact-item"><i class="fas fa-envelope"></i> 电子邮件：3958959944@qq.com</div>
+                    <p>我们会在收到反馈后尽快与您取得联系。</p>
+
+                    <h2>8. 声明的变更</h2>
+                    <p>我们可能会根据法律法规变化或软件功能更新，适时修订本声明。修订后的版本将在官网公示，并以适当方式通知您（如软件内弹窗）。若您继续使用本软件，即视为您接受修订后的内容。我们鼓励您定期查阅本声明。</p>
+
+                    <div class="highlight-box">
+                        <p><strong>本声明的最终解释权归 Wtalk 开发者团队所有。</strong></p>
+                        <p style="margin-top:8px;"><i class="" style="color:#666;"></i> 我们用心做软件，也用心守护您的隐私。感谢您的信任与支持。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer class="footer">
+        <div class="container">
+            <span>&copy; 2026 Wtalk</span>
+            <div class="love">
+                <i class=""></i> 暂未开源 · 开发中
+            </div>
+            <div>
+                <a href="#">隐私声明</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== Scripts ===== -->
+    <script>
+        // ===== Scroll Reveal =====
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.05,
+            rootMargin: '0px 0px -20px 0px'
+        });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ===== Smooth anchor (if any) =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        console.log('Wtalk 隐私声明已加载，控制台输出。');
+    </script>
+</body>
+</html>
